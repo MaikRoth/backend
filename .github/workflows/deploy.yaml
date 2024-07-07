@@ -24,25 +24,5 @@ jobs:
 
       - name: Build and push backend Docker image
         run: |
-          docker build -t mathroik/my-backend:latest ./my-backend
+          docker build -t mathroik/my-backend:latest ./backend
           docker push mathroik/my-backend:latest
-
-      - name: Build and push frontend Docker image
-        run: |
-          docker build -t mathroik/my-frontend:latest ./my-frontend
-          docker push mathroik/my-frontend:latest
-
-      - name: Set up Kubernetes
-        uses: azure/setup-kubectl@v1
-        with:
-          version: 'latest'
-
-      - name: Update backend deployment in Kubernetes
-        run: |
-          kubectl set image deployment/backend backend=mathroik/my-backend:latest --record
-          kubectl rollout status deployment/backend
-
-      - name: Update frontend deployment in Kubernetes
-        run: |
-          kubectl set image deployment/frontend frontend=mathroik/my-frontend:latest --record
-          kubectl rollout status deployment/frontend
