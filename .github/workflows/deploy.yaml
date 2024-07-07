@@ -24,13 +24,13 @@ jobs:
 
       - name: Build and push backend Docker image
         run: |
-          docker build -t your-dockerhub-username/my-backend:latest ./my-backend
-          docker push your-dockerhub-username/my-backend:latest
+          docker build -t mathroik/my-backend:latest ./my-backend
+          docker push mathroik/my-backend:latest
 
       - name: Build and push frontend Docker image
         run: |
-          docker build -t your-dockerhub-username/my-frontend:latest ./my-frontend
-          docker push your-dockerhub-username/my-frontend:latest
+          docker build -t mathroik/my-frontend:latest ./my-frontend
+          docker push mathroik/my-frontend:latest
 
       - name: Set up Kubernetes
         uses: azure/setup-kubectl@v1
@@ -39,10 +39,10 @@ jobs:
 
       - name: Update backend deployment in Kubernetes
         run: |
-          kubectl set image deployment/backend backend=your-dockerhub-username/my-backend:latest --record
+          kubectl set image deployment/backend backend=mathroik/my-backend:latest --record
           kubectl rollout status deployment/backend
 
       - name: Update frontend deployment in Kubernetes
         run: |
-          kubectl set image deployment/frontend frontend=your-dockerhub-username/my-frontend:latest --record
+          kubectl set image deployment/frontend frontend=mathroik/my-frontend:latest --record
           kubectl rollout status deployment/frontend
