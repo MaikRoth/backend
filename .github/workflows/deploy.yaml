@@ -1,0 +1,48 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push backend Docker image
+        run: |
+          docker build -t your-dockerhub-username/my-backend:latest ./my-backend
+          docker push your-dockerhub-username/my-backend:latest
+
+      - name: Build and push frontend Docker image
+        run: |
+          docker build -t your-dockerhub-username/my-frontend:latest ./my-frontend
+          docker push your-dockerhub-username/my-frontend:latest
+
+      - name: Set up Kubernetes
+        uses: azure/setup-kubectl@v1
+        with:
+          version: 'latest'
+
+      - name: Update backend deployment in Kubernetes
+        run: |
+          kubectl set image deployment/backend backend=your-dockerhub-username/my-backend:latest --record
+          kubectl rollout status deployment/backend
+
+      - name: Update frontend deployment in Kubernetes
+        run: |
+          kubectl set image deployment/frontend frontend=your-dockerhub-username/my-frontend:latest --record
+          kubectl rollout status deployment/frontend
