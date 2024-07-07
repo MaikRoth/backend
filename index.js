@@ -31,10 +31,13 @@ app.use(
 
 app.get('/api/visit', async (req, res) => {
   try {
+    console.log('Received request to /api/visit');
     const result = await pool.query('SELECT count FROM visit_count WHERE id = 1');
     let count = result.rows[0].count;
+    console.log('Current count:', count);
     count += 1;
     await pool.query('UPDATE visit_count SET count = $1 WHERE id = 1', [count]);
+    console.log('Updated count:', count);
     res.json({ visitCount: count });
   } catch (err) {
     console.error(err);
